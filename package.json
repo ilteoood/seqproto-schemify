@@ -1,0 +1,17 @@
+{
+  "name": "seqproto-schemify",
+  "version": "0.1.0",
+  "description": "Generate seqproto code from json schema",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "Matteo Pietro Dazzi",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/json-schema": "^7.0.15",
+    "seqproto": "^0.2.1",
+    "vitest": "^1.0.4"
+  }
+}
