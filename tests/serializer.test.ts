@@ -39,4 +39,31 @@ describe('serializer', () => {
             expect(result).toStrictEqual(ser.getBuffer())
         })
     })
+
+    it('should serialize object', () => {
+        const jsonSchema = {
+            type: 'object',
+            properties: {
+                name: {
+                    type: 'string'
+                },
+                age: {
+                    type: 'integer'
+                }
+            }
+        } as const
+
+        const toSerialize = {
+            age: 1,
+            name: 'test'
+        }
+
+        const result = serialize(jsonSchema)(createSer(), toSerialize)
+
+        const ser = createSer()
+        ser.serializeString(toSerialize.name)
+        ser.serializeUInt32(toSerialize.age)
+
+        expect(result).toStrictEqual(ser.getBuffer())
+    })
 })

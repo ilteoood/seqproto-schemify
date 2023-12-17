@@ -3,10 +3,10 @@ import type { JSONSchema4, JSONSchema4TypeName } from 'json-schema'
 type SerializerCreator = (objectobjectKey?: string) => string
 
 const serializers: Partial<Record<JSONSchema4TypeName, SerializerCreator>> = {
-    'boolean': (objectKey?: string) => objectKey ? `ser.serializeBoolean(object[${objectKey}])` : `ser.serializeBoolean(object)`,
-    'integer': (objectKey?: string) => objectKey ? `ser.serializeUInt32(object[${objectKey})` : `ser.serializeUInt32(object)`,
-    'number': (objectKey?: string) => objectKey ? `ser.serializeFloat32(object[${objectKey})` : `ser.serializeFloat32(object)`,
-    'string': (objectKey?: string) => objectKey ? `ser.serializeString(object[${objectKey})` : `ser.serializeString(object)`,
+    'boolean': (objectKey?: string) => objectKey ? `ser.serializeBoolean(object['${objectKey}'])\n` : `ser.serializeBoolean(object)\n`,
+    'integer': (objectKey?: string) => objectKey ? `ser.serializeUInt32(object['${objectKey}'])\n` : `ser.serializeUInt32(object)\n`,
+    'number': (objectKey?: string) => objectKey ? `ser.serializeFloat32(object['${objectKey}'])\n` : `ser.serializeFloat32(object)\n`,
+    'string': (objectKey?: string) => objectKey ? `ser.serializeString(object['${objectKey}'])\n` : `ser.serializeString(object)\n`,
 }
 
 export const serialize = (jsonSchema: JSONSchema4) => {
@@ -22,15 +22,15 @@ const serializeInternal = (jsonSchema: JSONSchema4, generatedCode: string = '', 
     const serializer = serializers[type as JSONSchema4TypeName]
 
     if (serializer) {
-        return generatedCode + serializer(objectKey)
+        return serializer(objectKey)
     } else if (type === 'object') {
         generatedCode += objectKey ? `{
             let object =
         ` : `{\n`
-        Object.entries(jsonSchema.properties || {}).forEach(([objectKey, value]) => {
-            generatedCode += serializeInternal(value, generatedCode, objectKey)
+        Object.entries(jsonSchema.properties || {}).forEach(([objectKey, schema]) => {
+            generatedCode += serializeInternal(schema, generatedCode, objectKey)
         })
-        generatedCode += '}\n'
+        generatedCode += '\n}\n'
         return generatedCode
     }
 
