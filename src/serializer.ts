@@ -16,13 +16,13 @@ const serializers: Partial<Record<JSONSchema4TypeName, SerializerCreator>> = {
 }
 
 export const serialize = (jsonSchema: JSONSchema4) => {
-    const generatedCode = serializeInternal(jsonSchema) + `
+    const generatedCode = `${serializeInternal(jsonSchema)}
     return ser.getBuffer()`
 
     return new Function('ser', 'object_0', generatedCode)
 }
 
-const serializeInternal = (jsonSchema: JSONSchema4, index: number = -1, objectKey?: string) => {
+const serializeInternal = (jsonSchema: JSONSchema4, index = -1, objectKey?: string) => {
     const type = jsonSchema.type
 
     const serializerBuilder = serializers[type as JSONSchema4TypeName]
