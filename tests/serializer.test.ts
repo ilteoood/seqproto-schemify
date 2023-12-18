@@ -246,5 +246,23 @@ describe('serializer', () => {
 
             expect(result).toStrictEqual(ser.getBuffer())
         })
+
+        it('should serialize array of plain values', () => {
+            const jsonSchema = {
+                type: 'array',
+                items: { type: 'string' }
+            } as const
+
+            const toSerialize = ['test', 'test2']
+
+            const result = serialize(jsonSchema)(createSer(), toSerialize)
+
+            const ser = createSer()
+            ser.serializeArray(toSerialize, (ser, object) => {
+                ser.serializeString(object)
+            })
+
+            expect(result).toStrictEqual(ser.getBuffer())
+        })
     })
 })
