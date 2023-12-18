@@ -66,4 +66,43 @@ describe('serializer', () => {
 
         expect(result).toStrictEqual(ser.getBuffer())
     })
+
+    it('should serialize nested object', () => {
+        const jsonSchema = {
+            type: 'object',
+            properties: {
+                name: {
+                    type: 'string'
+                },
+                age: {
+                    type: 'integer'
+                },
+                address: {
+                    type: 'object',
+                    properties: {
+                        city: {
+                            type: 'string'
+                        }
+                    }
+                }
+            }
+        } as const
+
+        const toSerialize = {
+            name: 'test',
+            age: 1,
+            address: {
+                city: 'test'
+            }
+        }
+
+        const result = serialize(jsonSchema)(createSer(), toSerialize)
+
+        const ser = createSer()
+        ser.serializeString(toSerialize.name)
+        ser.serializeNumber(toSerialize.age)
+        ser.serializeString(toSerialize.address.city)
+
+        expect(result).toStrictEqual(ser.getBuffer())
+    })
 })
