@@ -1,6 +1,6 @@
 import type { JSONSchema4, JSONSchema4TypeName } from 'json-schema'
 
-type SerializerCreator = (index: number, objectobjectKey?: string) => string
+type SerializerCreator = (jsonSchema: JSONSchema4) => (index: number, objectobjectKey?: string) => string
 
 const indexedObject = (index: number) => `object_${Math.max(index, 0)}`
 
@@ -9,10 +9,10 @@ const buildSerializeFunction = (functionName: string) => (index: number, objectK
     `ser.${functionName}(${indexedObject(index)})\n`
 
 const serializers: Partial<Record<JSONSchema4TypeName, SerializerCreator>> = {
-    'boolean': buildSerializeFunction('serializeBoolean'),
-    'integer': buildSerializeFunction('serializeNumber'),
-    'number': buildSerializeFunction('serializeNumber'),
-    'string': buildSerializeFunction('serializeString'),
+    'boolean': () => buildSerializeFunction('serializeBoolean'),
+    'integer': (jsonSchema: JSONSchema4) => jsonSchema.minimum! >= 0 ? buildSerializeFunction('serializeUInt32') : buildSerializeFunction('serializeNumber'),
+    'number': () => buildSerializeFunction('serializeNumber'),
+    'string': () => buildSerializeFunction('serializeString'),
 }
 
 export const serialize = (jsonSchema: JSONSchema4) => {
@@ -25,9 +25,10 @@ export const serialize = (jsonSchema: JSONSchema4) => {
 const serializeInternal = (jsonSchema: JSONSchema4, index: number = -1, objectKey?: string) => {
     const type = jsonSchema.type
 
-    const serializer = serializers[type as JSONSchema4TypeName]
+    const serializerBuilder = serializers[type as JSONSchema4TypeName]
 
-    if (serializer) {
+    if (serializerBuilder) {
+        const serializer = serializerBuilder(jsonSchema)
         return serializer(index, objectKey)
     } else if (type === 'object') {
         let generatedCode = objectKey ? `{

@@ -40,6 +40,37 @@ describe('serializer', () => {
         })
     })
 
+    describe('integer serialization', () => {
+        const toSerialize = 1
+        const minimumPositiveValues = [...new Array(10).keys()]
+
+        it.each(minimumPositiveValues)('should serialize integer with minimum >= 0, %d', (minimum) => {
+            const jsonSchema = { type: 'integer', minimum } as JSONSchema4
+
+            const serializer = serialize(jsonSchema)
+
+            const ser = createSer()
+            ser.serializeUInt32(toSerialize)
+
+            const result = serializer(createSer(), toSerialize)
+            expect(result).toStrictEqual(ser.getBuffer())
+        })
+
+        const minimumNegativeValues = [...new Array(10).keys()].slice(1).map((n) => -n)
+
+        it.each(minimumNegativeValues)('should serialize integer with minimum < 0, %d', (minimum) => {
+            const jsonSchema = { type: 'integer', minimum } as JSONSchema4
+
+            const serializer = serialize(jsonSchema)
+
+            const ser = createSer()
+            ser.serializeNumber(toSerialize)
+
+            const result = serializer(createSer(), toSerialize)
+            expect(result).toStrictEqual(ser.getBuffer())
+        })
+    })
+
     it('should serialize object', () => {
         const jsonSchema = {
             type: 'object',
