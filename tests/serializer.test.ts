@@ -216,4 +216,35 @@ describe('serializer', () => {
             expect(result).toStrictEqual(ser.getBuffer())
         })
     })
+
+    describe('array serialization', () => {
+        it('should serialize array of objects', () => {
+            const jsonSchema = {
+                type: 'array',
+                items: {
+                    type: 'object',
+                    properties: {
+                        name: {
+                            type: 'string'
+                        },
+                        age: {
+                            type: 'integer'
+                        }
+                    }
+                }
+            } as const
+
+            const toSerialize = [{ name: 'test', age: 1 }]
+
+            const result = serialize(jsonSchema)(createSer(), toSerialize)
+
+            const ser = createSer()
+            ser.serializeArray(toSerialize, (ser, object) => {
+                ser.serializeString(object.name)
+                ser.serializeNumber(object.age)
+            })
+
+            expect(result).toStrictEqual(ser.getBuffer())
+        })
+    })
 })

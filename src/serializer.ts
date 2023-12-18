@@ -39,8 +39,12 @@ const serializeInternal = (jsonSchema: JSONSchema4, index: number = -1, objectKe
         })
         generatedCode += '\n}\n'
         return generatedCode
+    } else if (type === 'array') {
+        let generatedCode = `ser.serializeArray(${indexedObject(index)}, (ser, ${indexedObject(index)}) => {`
+		generatedCode += serializeInternal(jsonSchema.items!, index)
+        generatedCode += `\n})\n`
+        return generatedCode
     }
 
-    // TODO: handle array type
     return ''
 }
