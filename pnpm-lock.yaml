@@ -9,8 +9,8 @@ devDependencies:
     specifier: ^7.0.15
     version: 7.0.15
   seqproto:
-    specifier: ^0.2.1
-    version: 0.2.1
+    specifier: ^0.2.2
+    version: 0.2.2
   vitest:
     specifier: ^1.0.4
     version: 1.0.4
@@ -676,8 +676,8 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /seqproto@0.2.1:
-    resolution: {integrity: sha512-65aYTFNapua1IZIw83mRuBTqSPY3Ni97j7TYxVC0/DxLkjErp8zwT5yOW/DFQYmsKqXy/rs9fuws3O1Qb5TLDA==}
+  /seqproto@0.2.2:
+    resolution: {integrity: sha512-8Jl7lzV1jLWgEIo+ZnwZIuzf6lDVYCBbYP7j7r/AgVptdWHjT6h0RaVAkRxrvYnb5tR9dUcA3fCWgD1uHLynIQ==}
     engines: {node: '>= 20.0.0'}
     dev: true
 
