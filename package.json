@@ -4,12 +4,18 @@
   "description": "Generate seqproto code from json schema",
   "main": "index.js",
   "scripts": {
-    "test": "vitest"
+    "test": "vitest",
+    "format": "biome format ./src ./test",
+    "format:fix": "pnpm run format --write",
+    "sort": "biome check --apply-unsafe ./src ./test",
+    "lint": "biome lint ./src ./test",
+    "lint:fix": "biome check --apply ./src ./test"
   },
   "keywords": [],
   "author": "Matteo Pietro Dazzi",
   "license": "MIT",
   "devDependencies": {
+    "@biomejs/biome": "1.4.1",
     "@types/json-schema": "^7.0.15",
     "seqproto": "^0.2.2",
     "vitest": "^1.0.4"
