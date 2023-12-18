@@ -105,4 +105,82 @@ describe('serializer', () => {
 
         expect(result).toStrictEqual(ser.getBuffer())
     })
+
+    it('should serialize very deep nested object', () => {
+        const jsonSchema = {
+            type: 'object',
+            properties: {
+                a: {
+                    type: 'object',
+                    properties: {
+                        b: {
+                            type: 'object',
+                            properties: {
+                                c: {
+                                    type: 'object',
+                                    properties: {
+                                        d: {
+                                            type: 'object',
+                                            properties: {
+                                                e: {
+                                                    type: 'object',
+                                                    properties: {
+                                                        f: {
+                                                            type: 'object',
+                                                            properties: {
+                                                                g: {
+                                                                    type: 'object',
+                                                                    properties: {
+                                                                        h: {
+                                                                            type: 'object',
+                                                                            properties: {
+                                                                                i: {
+                                                                                    type: 'integer'
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } as const
+
+        const toSerialize = {
+            a: {
+                b: {
+                    c: {
+                        d: {
+                            e: {
+                                f: {
+                                    g: {
+                                        h: {
+                                            i: 1
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        const result = serialize(jsonSchema)(createSer(), toSerialize)
+
+        const ser = createSer()
+        ser.serializeNumber(toSerialize.a.b.c.d.e.f.g.h.i)
+
+        expect(result).toStrictEqual(ser.getBuffer())
+    })
 })
