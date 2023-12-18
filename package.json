@@ -3,21 +3,35 @@
   "version": "0.1.0",
   "description": "Generate seqproto code from json schema",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "vitest",
     "format": "biome format ./src ./test",
     "format:fix": "pnpm run format --write",
     "sort": "biome check --apply-unsafe ./src ./test",
     "lint": "biome lint ./src ./test",
-    "lint:fix": "biome check --apply ./src ./test"
+    "lint:fix": "biome check --apply ./src ./test",
+    "build": "tsup"
   },
-  "keywords": [],
+  "exports": {
+    "./*": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "keywords": [
+    "seqproto",
+    "orama"
+  ],
   "author": "Matteo Pietro Dazzi",
   "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "1.4.1",
     "@types/json-schema": "^7.0.15",
     "seqproto": "^0.2.2",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3",
     "vitest": "^1.0.4"
   }
 }
