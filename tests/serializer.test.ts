@@ -71,102 +71,104 @@ describe('serializer', () => {
         })
     })
 
-    it('should serialize object', () => {
-        const jsonSchema = {
-            type: 'object',
-            properties: {
-                name: {
-                    type: 'string'
-                },
-                age: {
-                    type: 'integer'
+    describe('object serialization', () => {
+        it('should serialize plain object', () => {
+            const jsonSchema = {
+                type: 'object',
+                properties: {
+                    name: {
+                        type: 'string'
+                    },
+                    age: {
+                        type: 'integer'
+                    }
                 }
+            } as const
+
+            const toSerialize = {
+                age: 1,
+                name: 'test'
             }
-        } as const
 
-        const toSerialize = {
-            age: 1,
-            name: 'test'
-        }
+            const result = serialize(jsonSchema)(createSer(), toSerialize)
 
-        const result = serialize(jsonSchema)(createSer(), toSerialize)
+            const ser = createSer()
+            ser.serializeString(toSerialize.name)
+            ser.serializeNumber(toSerialize.age)
 
-        const ser = createSer()
-        ser.serializeString(toSerialize.name)
-        ser.serializeNumber(toSerialize.age)
+            expect(result).toStrictEqual(ser.getBuffer())
+        })
 
-        expect(result).toStrictEqual(ser.getBuffer())
-    })
-
-    it('should serialize nested object', () => {
-        const jsonSchema = {
-            type: 'object',
-            properties: {
-                name: {
-                    type: 'string'
-                },
-                age: {
-                    type: 'integer'
-                },
-                address: {
-                    type: 'object',
-                    properties: {
-                        city: {
-                            type: 'string'
+        it('should serialize nested object', () => {
+            const jsonSchema = {
+                type: 'object',
+                properties: {
+                    name: {
+                        type: 'string'
+                    },
+                    age: {
+                        type: 'integer'
+                    },
+                    address: {
+                        type: 'object',
+                        properties: {
+                            city: {
+                                type: 'string'
+                            }
                         }
                     }
                 }
+            } as const
+
+            const toSerialize = {
+                name: 'test',
+                age: 1,
+                address: {
+                    city: 'test'
+                }
             }
-        } as const
 
-        const toSerialize = {
-            name: 'test',
-            age: 1,
-            address: {
-                city: 'test'
-            }
-        }
+            const result = serialize(jsonSchema)(createSer(), toSerialize)
 
-        const result = serialize(jsonSchema)(createSer(), toSerialize)
+            const ser = createSer()
+            ser.serializeString(toSerialize.name)
+            ser.serializeNumber(toSerialize.age)
+            ser.serializeString(toSerialize.address.city)
 
-        const ser = createSer()
-        ser.serializeString(toSerialize.name)
-        ser.serializeNumber(toSerialize.age)
-        ser.serializeString(toSerialize.address.city)
+            expect(result).toStrictEqual(ser.getBuffer())
+        })
 
-        expect(result).toStrictEqual(ser.getBuffer())
-    })
-
-    it('should serialize very deep nested object', () => {
-        const jsonSchema = {
-            type: 'object',
-            properties: {
-                a: {
-                    type: 'object',
-                    properties: {
-                        b: {
-                            type: 'object',
-                            properties: {
-                                c: {
-                                    type: 'object',
-                                    properties: {
-                                        d: {
-                                            type: 'object',
-                                            properties: {
-                                                e: {
-                                                    type: 'object',
-                                                    properties: {
-                                                        f: {
-                                                            type: 'object',
-                                                            properties: {
-                                                                g: {
-                                                                    type: 'object',
-                                                                    properties: {
-                                                                        h: {
-                                                                            type: 'object',
-                                                                            properties: {
-                                                                                i: {
-                                                                                    type: 'integer'
+        it('should serialize very deep nested object', () => {
+            const jsonSchema = {
+                type: 'object',
+                properties: {
+                    a: {
+                        type: 'object',
+                        properties: {
+                            b: {
+                                type: 'object',
+                                properties: {
+                                    c: {
+                                        type: 'object',
+                                        properties: {
+                                            d: {
+                                                type: 'object',
+                                                properties: {
+                                                    e: {
+                                                        type: 'object',
+                                                        properties: {
+                                                            f: {
+                                                                type: 'object',
+                                                                properties: {
+                                                                    g: {
+                                                                        type: 'object',
+                                                                        properties: {
+                                                                            h: {
+                                                                                type: 'object',
+                                                                                properties: {
+                                                                                    i: {
+                                                                                        type: 'integer'
+                                                                                    }
                                                                                 }
                                                                             }
                                                                         }
@@ -184,19 +186,19 @@ describe('serializer', () => {
                         }
                     }
                 }
-            }
-        } as const
+            } as const
 
-        const toSerialize = {
-            a: {
-                b: {
-                    c: {
-                        d: {
-                            e: {
-                                f: {
-                                    g: {
-                                        h: {
-                                            i: 1
+            const toSerialize = {
+                a: {
+                    b: {
+                        c: {
+                            d: {
+                                e: {
+                                    f: {
+                                        g: {
+                                            h: {
+                                                i: 1
+                                            }
                                         }
                                     }
                                 }
@@ -205,13 +207,13 @@ describe('serializer', () => {
                     }
                 }
             }
-        }
 
-        const result = serialize(jsonSchema)(createSer(), toSerialize)
+            const result = serialize(jsonSchema)(createSer(), toSerialize)
 
-        const ser = createSer()
-        ser.serializeNumber(toSerialize.a.b.c.d.e.f.g.h.i)
+            const ser = createSer()
+            ser.serializeNumber(toSerialize.a.b.c.d.e.f.g.h.i)
 
-        expect(result).toStrictEqual(ser.getBuffer())
+            expect(result).toStrictEqual(ser.getBuffer())
+        })
     })
 })
