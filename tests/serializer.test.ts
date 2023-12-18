@@ -14,11 +14,11 @@ describe('serializer', () => {
             },
             number: {
                 example: 1,
-                serializeFn: 'serializeFloat32'
+                serializeFn: 'serializeNumber'
             },
             integer: {
                 example: 1,
-                serializeFn: 'serializeUInt32'
+                serializeFn: 'serializeNumber'
             },
             boolean: {
                 example: true,
@@ -62,7 +62,7 @@ describe('serializer', () => {
 
         const ser = createSer()
         ser.serializeString(toSerialize.name)
-        ser.serializeUInt32(toSerialize.age)
+        ser.serializeNumber(toSerialize.age)
 
         expect(result).toStrictEqual(ser.getBuffer())
     })

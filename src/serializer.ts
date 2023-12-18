@@ -4,8 +4,8 @@ type SerializerCreator = (objectobjectKey?: string) => string
 
 const serializers: Partial<Record<JSONSchema4TypeName, SerializerCreator>> = {
     'boolean': (objectKey?: string) => objectKey ? `ser.serializeBoolean(object['${objectKey}'])\n` : `ser.serializeBoolean(object)\n`,
-    'integer': (objectKey?: string) => objectKey ? `ser.serializeUInt32(object['${objectKey}'])\n` : `ser.serializeUInt32(object)\n`,
-    'number': (objectKey?: string) => objectKey ? `ser.serializeFloat32(object['${objectKey}'])\n` : `ser.serializeFloat32(object)\n`,
+    'integer': (objectKey?: string) => objectKey ? `ser.serializeNumber(object['${objectKey}'])\n` : `ser.serializeNumber(object)\n`,
+    'number': (objectKey?: string) => objectKey ? `ser.serializeNumber(object['${objectKey}'])\n` : `ser.serializeNumber(object)\n`,
     'string': (objectKey?: string) => objectKey ? `ser.serializeString(object['${objectKey}'])\n` : `ser.serializeString(object)\n`,
 }
 
