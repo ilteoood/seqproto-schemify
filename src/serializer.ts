@@ -9,10 +9,10 @@ const buildSerializeFunction = (functionName: string) => (index: number, objectK
     `ser.${functionName}(${indexedObject(index)})\n`
 
 const serializers: Partial<Record<JSONSchema4TypeName, SerializerCreator>> = {
-    'boolean': () => buildSerializeFunction('serializeBoolean'),
-    'integer': (jsonSchema: JSONSchema4) => jsonSchema.minimum! >= 0 ? buildSerializeFunction('serializeUInt32') : buildSerializeFunction('serializeNumber'),
-    'number': () => buildSerializeFunction('serializeNumber'),
-    'string': () => buildSerializeFunction('serializeString'),
+    boolean: () => buildSerializeFunction('serializeBoolean'),
+    integer: (jsonSchema: JSONSchema4) => jsonSchema.minimum! >= 0 ? buildSerializeFunction('serializeUInt32') : buildSerializeFunction('serializeNumber'),
+    number: () => buildSerializeFunction('serializeNumber'),
+    string: () => buildSerializeFunction('serializeString'),
 }
 
 export const serialize = (jsonSchema: JSONSchema4) => {
