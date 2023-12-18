@@ -6,9 +6,7 @@ const identifiers = {
 	TOKEN_SEPARATOR: " ",
 };
 
-const VALUE_TYPES = ["string", "boolean", "number"];
-
-const PARSE_ERROR_CODES = {
+export const PARSE_ERROR_CODES = {
 	EXPECTED_MESSAGE_KEYWORD: "EXPECTED_MESSAGE_KEYWORD",
 	EXPECTED_OPENING_BRACKET: "EXPECTED_OPENING_BRACKET",
 	EXPECTED_CLOSING_BRACKET: "EXPECTED_CLOSING_BRACKET",
@@ -16,6 +14,27 @@ const PARSE_ERROR_CODES = {
 	EXPECTED_PROPERTY: "EXPECTED_PROPERTY",
 	INVALID_INTEGER_VALUE: "INVALID_INTEGER_VALUE",
 };
+
+type Middleware = (token: string) => MiddlewareResult;
+
+export type ParsedValue = {
+	value: number;
+	type: string;
+	key: string;
+} & Record<string, boolean>;
+
+export type ParseResult =
+	| {
+		type: string;
+		identifier: string;
+	}
+	| Record<string, ParsedValue>;
+
+export type MiddlewareResult = {
+	objectFinished?: boolean;
+	next: Middleware;
+	data?: Partial<ParseResult>;
+}
 
 export class ParseError extends Error {
 	public code: string;
@@ -25,32 +44,11 @@ export class ParseError extends Error {
 	}
 }
 
-type ParsedValue = {
-	value: number;
-	type: string;
-	key: string;
-} & Record<string, boolean>;
-
-type ParseResult =
-	| {
-		type: string;
-		identifier: string;
-	}
-	| Record<string, ParsedValue>;
-
-interface MiddlewareResult {
-	objectFinished?: boolean;
-	next: Middleware;
-	data?: Partial<ParseResult>;
-}
-
-type Middleware = (token: string) => MiddlewareResult;
-
 export class SeqProtoParser {
 
 	private UNIQUE_KEYWORDS = new Set(["required", "optional"]);
 
-	private UNIQUE_VALUE_TYPES = new Set<string>(VALUE_TYPES);
+	private UNIQUE_VALUE_TYPES = new Set<string>(["string", "boolean", "number"]);
 
 	public parse(schema: string): ParseResult[] {
 		const tokens = schema
