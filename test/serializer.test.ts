@@ -223,6 +223,52 @@ describe("serializer", () => {
 
 			expect(result).toStrictEqual(ser.getBuffer());
 		});
+
+		it("should serialize nested array", () => {
+			const jsonSchema = {
+				type: "object",
+				properties: {
+					name: {
+						type: "string",
+					},
+					age: {
+						type: "integer",
+					},
+					addresses: {
+						type: "array",
+						items: {
+							type: "object",
+							properties: {
+								city: {
+									type: "string",
+								},
+							},
+						},
+					},
+				},
+			} as const
+
+			const toSerialize = {
+				name: "test",
+				age: 1,
+				addresses: [
+					{
+						city: "test",
+					},
+				],
+			};
+
+			const result = serialize(jsonSchema)(createSer(), toSerialize);
+
+			const ser = createSer();
+			ser.serializeString(toSerialize.name);
+			ser.serializeNumber(toSerialize.age);
+			ser.serializeArray(toSerialize.addresses, (ser, object) => {
+				ser.serializeString(object.city);
+			})
+
+			expect(result).toStrictEqual(ser.getBuffer());
+		})
 	});
 
 	describe("array serialization", () => {
@@ -269,6 +315,47 @@ describe("serializer", () => {
 			ser.serializeArray(toSerialize, (ser, object) => {
 				ser.serializeString(object);
 			});
+
+			expect(result).toStrictEqual(ser.getBuffer());
+		});
+
+		it("should serialize array nested inside an object", () => {
+			const jsonSchema = {
+				type: "array",
+				items: {
+					type: "object",
+					properties: {
+						name: {
+							type: "array",
+							items: {
+								type: "object",
+								properties: {
+									name: {
+										type: "string",
+									},
+								},
+							}
+						},
+					},
+				},
+			} as const;
+
+			const toSerialize = [{
+				name: [
+					{
+						name: "test",
+					},
+				],
+			}]
+
+			const result = serialize(jsonSchema)(createSer(), toSerialize);
+
+			const ser = createSer();
+			ser.serializeArray(toSerialize, (ser, object) => {
+				ser.serializeArray(object.name, (ser, object) => {
+					ser.serializeString(object.name);
+				})
+			})
 
 			expect(result).toStrictEqual(ser.getBuffer());
 		});

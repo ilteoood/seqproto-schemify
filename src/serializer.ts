@@ -1,16 +1,23 @@
 import type { JSONSchema4, JSONSchema4TypeName } from "json-schema";
 
-type SerializerCreator = (
-	jsonSchema: JSONSchema4,
-) => (index: number, objectobjectKey?: string) => string;
+type SerializeFunction = (index: number, objectKey?: string) => string;
+
+type SerializerCreator = (jsonSchema: JSONSchema4) => SerializeFunction;
+
+type SerializeFunctionBuilder = (functionName: string) => SerializeFunction
 
 const indexedObject = (index: number) => `object_${Math.max(index, 0)}`;
 
-const buildSerializeFunction =
-	(functionName: string) => (index: number, objectKey?: string) =>
-		objectKey
-			? `ser.${functionName}(${indexedObject(index)}['${objectKey}'])\n`
-			: `ser.${functionName}(${indexedObject(index)})\n`;
+const buildBaseSerializeFunction: SerializeFunctionBuilder = (functionName: string) => (index: number, objectKey?: string) => objectKey
+	? `ser.${functionName}(${indexedObject(index)}['${objectKey}']`
+	: `ser.${functionName}(${indexedObject(index)}`;
+
+const buildSerializeFunction: SerializeFunctionBuilder = (functionName: string) => {
+	const builderFunction = buildBaseSerializeFunction(functionName)
+	return (index: number, objectKey?: string) => `${builderFunction(index, objectKey)})\n`
+};
+
+const buildArraySerializeFunction: SerializeFunction = buildBaseSerializeFunction('serializeArray');
 
 const serializers: Partial<Record<JSONSchema4TypeName, SerializerCreator>> = {
 	boolean: () => buildSerializeFunction("serializeBoolean"),
@@ -63,9 +70,7 @@ const serializeInternal = (
 	}
 
 	if (type === "array") {
-		let generatedCode = `ser.serializeArray(${indexedObject(
-			index,
-		)}, (ser, ${indexedObject(index)}) => {`;
+		let generatedCode = `${buildArraySerializeFunction(index, objectKey)}, (ser, ${indexedObject(index + 1)}) => {`;
 		generatedCode += serializeInternal(jsonSchema.items || {}, index);
 		generatedCode += "\n})\n";
 		return generatedCode;
