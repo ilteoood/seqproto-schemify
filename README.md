@@ -1,6 +1,6 @@
 # seqproto-schemify
 
-seqproto-schemify is an utility that aims to generate seqproto serialization and deserialization code from a json schema.
+seqproto-schemify is an utility that aims to generate [seqproto](https://github.com/oramasearch/seqproto) serialization and deserialization code from a json schema.
 
 ## Usage
 
