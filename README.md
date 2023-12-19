@@ -31,3 +31,29 @@ const toSerialize = {
 
 const resultBuffer = serializer(createSer(), toSerialize);
 ```
+
+
+### Deserialization
+
+```javascript
+import { deserialize } from 'seqproto-schemify';
+import { createDes } from 'seqproto'
+
+const jsonSchema = {
+    type: 'object',
+    properties: {
+        name: {
+            type: 'string'
+        },
+        age: {
+            type: 'integer'
+        }
+    }
+};
+
+const deserializer = deserialize(jsonSchema);
+
+const arrayBuffer = ...
+
+const result = deserializer(createDes(arrayBuffer));
+```
