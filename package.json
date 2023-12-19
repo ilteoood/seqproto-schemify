@@ -29,6 +29,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.4.1",
     "@types/json-schema": "^7.0.15",
+    "@types/node": "^20.10.5",
     "seqproto": "^0.2.2",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3",
