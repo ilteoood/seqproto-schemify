@@ -145,5 +145,83 @@ describe("deserializer", () => {
 
 			expect(result).toStrictEqual(toSerialize);
 		});
+
+		it("should serialize very deep nested object", () => {
+			const jsonSchema = {
+				type: "object",
+				properties: {
+					a: {
+						type: "object",
+						properties: {
+							b: {
+								type: "object",
+								properties: {
+									c: {
+										type: "object",
+										properties: {
+											d: {
+												type: "object",
+												properties: {
+													e: {
+														type: "object",
+														properties: {
+															f: {
+																type: "object",
+																properties: {
+																	g: {
+																		type: "object",
+																		properties: {
+																			h: {
+																				type: "object",
+																				properties: {
+																					i: {
+																						type: "integer",
+																					},
+																				},
+																			},
+																		},
+																	},
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			} as const;
+
+			const toSerialize = {
+				a: {
+					b: {
+						c: {
+							d: {
+								e: {
+									f: {
+										g: {
+											h: {
+												i: 1,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			};
+
+			const ser = createSer();
+			ser.serializeNumber(toSerialize.a.b.c.d.e.f.g.h.i);
+
+			const result = deserialize(jsonSchema)(createDes(ser.getBuffer()));
+
+			expect(result).toStrictEqual(toSerialize);
+		});
 	});
 });
