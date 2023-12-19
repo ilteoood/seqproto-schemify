@@ -223,5 +223,51 @@ describe("deserializer", () => {
 
 			expect(result).toStrictEqual(toSerialize);
 		});
+
+		it("should serialize nested array", () => {
+			const jsonSchema = {
+				type: "object",
+				properties: {
+					name: {
+						type: "string",
+					},
+					age: {
+						type: "integer",
+					},
+					addresses: {
+						type: "array",
+						items: {
+							type: "object",
+							properties: {
+								city: {
+									type: "string",
+								},
+							},
+						},
+					},
+				},
+			} as const;
+
+			const toSerialize = {
+				name: "test",
+				age: 1,
+				addresses: [
+					{
+						city: "test",
+					},
+				],
+			};
+
+			const ser = createSer();
+			ser.serializeString(toSerialize.name);
+			ser.serializeNumber(toSerialize.age);
+			ser.serializeArray(toSerialize.addresses, (ser, object) => {
+				ser.serializeString(object.city);
+			});
+
+            const result = deserialize(jsonSchema)(createDes(ser.getBuffer()));
+
+			expect(result).toStrictEqual(toSerialize);
+		});
 	});
 });

@@ -6,9 +6,9 @@ type SerializeFunctionBuilder = (functionName: string) => string;
 
 const buildBaseSerializeFunction: SerializeFunctionBuilder = (
 	functionName: string,
-) => `des.${functionName}()`;
+) => `des.${functionName}(`;
 
-const buildSerializeFunction = buildBaseSerializeFunction;
+const buildSerializeFunction = (functionName: string) => `${buildBaseSerializeFunction(functionName)})`;
 
 const arrayDeserializeFunction = buildBaseSerializeFunction("deserializeArray");
 
@@ -51,9 +51,9 @@ const deserializeInternal = (jsonSchema: JSONSchema4) => {
 	}
 
 	if (type === "array") {
-		let generatedCode = `${arrayDeserializeFunction}, (ser, object) => {`;
+		let generatedCode = `${arrayDeserializeFunction}(des) => (`;
 		generatedCode += deserializeInternal(jsonSchema.items || {});
-		generatedCode += "\n})\n";
+		generatedCode += "\n))\n";
 		return generatedCode;
 	}
 
