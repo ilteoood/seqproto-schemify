@@ -246,7 +246,7 @@ describe("serializer", () => {
 						},
 					},
 				},
-			} as const
+			} as const;
 
 			const toSerialize = {
 				name: "test",
@@ -265,10 +265,10 @@ describe("serializer", () => {
 			ser.serializeNumber(toSerialize.age);
 			ser.serializeArray(toSerialize.addresses, (ser, object) => {
 				ser.serializeString(object.city);
-			})
+			});
 
 			expect(result).toStrictEqual(ser.getBuffer());
-		})
+		});
 	});
 
 	describe("array serialization", () => {
@@ -334,19 +334,21 @@ describe("serializer", () => {
 										type: "string",
 									},
 								},
-							}
+							},
 						},
 					},
 				},
 			} as const;
 
-			const toSerialize = [{
-				name: [
-					{
-						name: "test",
-					},
-				],
-			}]
+			const toSerialize = [
+				{
+					name: [
+						{
+							name: "test",
+						},
+					],
+				},
+			];
 
 			const result = serialize(jsonSchema)(createSer(), toSerialize);
 
@@ -354,8 +356,8 @@ describe("serializer", () => {
 			ser.serializeArray(toSerialize, (ser, object) => {
 				ser.serializeArray(object.name, (ser, object) => {
 					ser.serializeString(object.name);
-				})
-			})
+				});
+			});
 
 			expect(result).toStrictEqual(ser.getBuffer());
 		});
