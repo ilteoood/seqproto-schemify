@@ -8,7 +8,8 @@ const buildBaseSerializeFunction: SerializeFunctionBuilder = (
 	functionName: string,
 ) => `des.${functionName}(`;
 
-const buildSerializeFunction = (functionName: string) => `${buildBaseSerializeFunction(functionName)})`;
+const buildSerializeFunction = (functionName: string) =>
+	`${buildBaseSerializeFunction(functionName)})`;
 
 const arrayDeserializeFunction = buildBaseSerializeFunction("deserializeArray");
 

@@ -146,7 +146,7 @@ describe("deserializer", () => {
 			expect(result).toStrictEqual(toSerialize);
 		});
 
-		it("should serialize very deep nested object", () => {
+		it("should deserialize very deep nested object", () => {
 			const jsonSchema = {
 				type: "object",
 				properties: {
@@ -224,7 +224,7 @@ describe("deserializer", () => {
 			expect(result).toStrictEqual(toSerialize);
 		});
 
-		it("should serialize nested array", () => {
+		it("should deserialize nested array", () => {
 			const jsonSchema = {
 				type: "object",
 				properties: {
@@ -265,7 +265,99 @@ describe("deserializer", () => {
 				ser.serializeString(object.city);
 			});
 
-            const result = deserialize(jsonSchema)(createDes(ser.getBuffer()));
+			const result = deserialize(jsonSchema)(createDes(ser.getBuffer()));
+
+			expect(result).toStrictEqual(toSerialize);
+		});
+	});
+
+	describe("array deserialization", () => {
+		it("should deserialize array of objects", () => {
+			const jsonSchema = {
+				type: "array",
+				items: {
+					type: "object",
+					properties: {
+						name: {
+							type: "string",
+						},
+						age: {
+							type: "integer",
+						},
+					},
+				},
+			} as const;
+
+			const toSerialize = [{ name: "test", age: 1 }];
+
+			const ser = createSer();
+			ser.serializeArray(toSerialize, (ser, object) => {
+				ser.serializeString(object.name);
+				ser.serializeNumber(object.age);
+			});
+
+			const result = deserialize(jsonSchema)(createDes(ser.getBuffer()));
+
+			expect(result).toStrictEqual(toSerialize);
+		});
+
+		it("should deserialize array of plain values", () => {
+			const jsonSchema = {
+				type: "array",
+				items: { type: "string" },
+			} as const;
+
+			const toSerialize = ["test", "test2"];
+
+			const ser = createSer();
+			ser.serializeArray(toSerialize, (ser, object) => {
+				ser.serializeString(object);
+			});
+
+			const result = deserialize(jsonSchema)(createDes(ser.getBuffer()));
+
+			expect(result).toStrictEqual(toSerialize);
+		});
+
+		it("should deserialize array nested inside an object", () => {
+			const jsonSchema = {
+				type: "array",
+				items: {
+					type: "object",
+					properties: {
+						name: {
+							type: "array",
+							items: {
+								type: "object",
+								properties: {
+									name: {
+										type: "string",
+									},
+								},
+							},
+						},
+					},
+				},
+			} as const;
+
+			const toSerialize = [
+				{
+					name: [
+						{
+							name: "test",
+						},
+					],
+				},
+			];
+
+			const ser = createSer();
+			ser.serializeArray(toSerialize, (ser, object) => {
+				ser.serializeArray(object.name, (ser, object) => {
+					ser.serializeString(object.name);
+				});
+			});
+
+			const result = deserialize(jsonSchema)(createDes(ser.getBuffer()));
 
 			expect(result).toStrictEqual(toSerialize);
 		});
