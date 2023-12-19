@@ -35,12 +35,8 @@ describe("deserializer", () => {
 			const ser = createSer();
 			ser[testData.deserializeFn.slice(2)](testData.example);
 
-			const des = createDes(ser.getBuffer());
-
 			const result = deserializer(createDes(ser.getBuffer()));
-			expect(result).toStrictEqual(
-				des[testData.deserializeFn](testData.example),
-			);
+			expect(result).toStrictEqual(testData.example);
 		});
 	});
 
@@ -58,10 +54,8 @@ describe("deserializer", () => {
 				const ser = createSer();
 				ser.serializeUInt32(toSerialize);
 
-				const des = createDes(ser.getBuffer());
-
 				const result = deserializer(createDes(ser.getBuffer()));
-				expect(result).toStrictEqual(des.deserializeUInt32());
+				expect(result).toStrictEqual(toSerialize);
 			},
 		);
 
@@ -79,11 +73,38 @@ describe("deserializer", () => {
 				const ser = createSer();
 				ser.serializeNumber(toSerialize);
 
-				const des = createDes(ser.getBuffer());
-
 				const result = deserializer(createDes(ser.getBuffer()));
-				expect(result).toStrictEqual(des.deserializeNumber());
+				expect(result).toStrictEqual(toSerialize);
 			},
 		);
+	});
+
+	describe("object deserialization", () => {
+		it("should deserialize plain object", () => {
+			const jsonSchema = {
+				type: "object",
+				properties: {
+					name: {
+						type: "string",
+					},
+					age: {
+						type: "integer",
+					},
+				},
+			} as const;
+
+			const toSerialize = {
+				age: 1,
+				name: "test",
+			};
+
+			const ser = createSer();
+			ser.serializeString(toSerialize.name);
+			ser.serializeNumber(toSerialize.age);
+
+			const result = deserialize(jsonSchema)(createDes(ser.getBuffer()));
+
+			expect(result).toStrictEqual(toSerialize);
+		});
 	});
 });
