@@ -1,4 +1,5 @@
 import type { JSONSchema4, JSONSchema4TypeName } from "json-schema";
+import type { Des } from "seqproto";
 
 type SerializerCreator = (jsonSchema: JSONSchema4) => string;
 
@@ -23,10 +24,10 @@ const deserializers: Partial<Record<JSONSchema4TypeName, SerializerCreator>> = {
 	string: () => buildSerializeFunction("deserializeString"),
 };
 
-export const deserialize = (jsonSchema: JSONSchema4) => {
+export const deserialize = <T>(jsonSchema: JSONSchema4) => {
 	const generatedCode = `return ${deserializeInternal(jsonSchema)}`;
 
-	return new Function("des", generatedCode);
+	return new Function("des", generatedCode) as (des: Des) => T;
 };
 
 const deserializeInternal = (jsonSchema: JSONSchema4) => {

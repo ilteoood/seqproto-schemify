@@ -1,10 +1,14 @@
 import type { JSONSchema4, JSONSchema4TypeName } from "json-schema";
 
+import type { Ser } from "seqproto";
+
 type SerializeFunction = (index: number, objectKey?: string) => string;
 
 type SerializerCreator = (jsonSchema: JSONSchema4) => SerializeFunction;
 
 type SerializeFunctionBuilder = (functionName: string) => SerializeFunction;
+
+type StrictArrayBuffer = ReturnType<Ser["getBuffer"]>;
 
 const indexedObject = (index: number) => `object_${Math.max(index, 0)}`;
 
@@ -39,7 +43,10 @@ export const serialize = (jsonSchema: JSONSchema4) => {
 	const generatedCode = `${serializeInternal(jsonSchema)}
     return ser.getBuffer()`;
 
-	return new Function("ser", "object_0", generatedCode);
+	return new Function("ser", "object_0", generatedCode) as (
+		ser: Ser,
+		object_0: unknown,
+	) => StrictArrayBuffer;
 };
 
 const serializeInternal = (
