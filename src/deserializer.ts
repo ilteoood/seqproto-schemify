@@ -1,4 +1,5 @@
 import type { JSONSchema4, JSONSchema4TypeName } from "json-schema";
+
 import type { Des } from "seqproto";
 
 type SerializerCreator = (jsonSchema: JSONSchema4) => string;
