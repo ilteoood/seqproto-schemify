@@ -1,14 +1,12 @@
 import type { JSONSchema4, JSONSchema4TypeName } from "json-schema";
 
-import type { Ser } from "seqproto";
+import type { Ser, StrictArrayBuffer } from "seqproto";
 
 type SerializeFunction = (index: number, objectKey?: string) => string;
 
 type SerializerCreator = (jsonSchema: JSONSchema4) => SerializeFunction;
 
 type SerializeFunctionBuilder = (functionName: string) => SerializeFunction;
-
-type StrictArrayBuffer = ReturnType<Ser["getBuffer"]>;
 
 const indexedObject = (index: number) => `object_${Math.max(index, 0)}`;
 
