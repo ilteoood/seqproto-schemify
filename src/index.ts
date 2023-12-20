@@ -1,3 +1,4 @@
+import { deserialize } from "./deserializer";
 import { serialize } from "./serializer";
 
-export { serialize };
+export { deserialize, serialize };
