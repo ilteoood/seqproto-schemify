@@ -44,39 +44,37 @@ describe("deserializer", () => {
 		const toSerialize = 1;
 		const minimumPositiveValues = [...new Array(10).keys()];
 
-		it.each(minimumPositiveValues)(
-			"should serialize integer with minimum >= 0, %d",
-			(minimum) => {
-				const jsonSchema = { type: "integer", minimum } as JSONSchema4;
+		it.each(
+			minimumPositiveValues,
+		)("should serialize integer with minimum >= 0, %d", (minimum) => {
+			const jsonSchema = { type: "integer", minimum } as JSONSchema4;
 
-				const deserializer = deserialize(jsonSchema);
+			const deserializer = deserialize(jsonSchema);
 
-				const ser = createSer();
-				ser.serializeUInt32(toSerialize);
+			const ser = createSer();
+			ser.serializeUInt32(toSerialize);
 
-				const result = deserializer(createDes(ser.getBuffer()));
-				expect(result).toStrictEqual(toSerialize);
-			},
-		);
+			const result = deserializer(createDes(ser.getBuffer()));
+			expect(result).toStrictEqual(toSerialize);
+		});
 
 		const minimumNegativeValues = [...new Array(10).keys()]
 			.slice(1)
 			.map((n) => -n);
 
-		it.each(minimumNegativeValues)(
-			"should serialize integer with minimum < 0, %d",
-			(minimum) => {
-				const jsonSchema = { type: "integer", minimum } as JSONSchema4;
+		it.each(
+			minimumNegativeValues,
+		)("should serialize integer with minimum < 0, %d", (minimum) => {
+			const jsonSchema = { type: "integer", minimum } as JSONSchema4;
 
-				const deserializer = deserialize(jsonSchema);
+			const deserializer = deserialize(jsonSchema);
 
-				const ser = createSer();
-				ser.serializeNumber(toSerialize);
+			const ser = createSer();
+			ser.serializeNumber(toSerialize);
 
-				const result = deserializer(createDes(ser.getBuffer()));
-				expect(result).toStrictEqual(toSerialize);
-			},
-		);
+			const result = deserializer(createDes(ser.getBuffer()));
+			expect(result).toStrictEqual(toSerialize);
+		});
 	});
 
 	describe("object deserialization", () => {
